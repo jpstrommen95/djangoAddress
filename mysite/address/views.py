@@ -63,17 +63,26 @@ def do_edit(request, contact_id):
     return HttpResponseRedirect(reverse('address:home'))
 
 
-def do_delete():
-    return None
+def do_delete(request, contact_id):
+    to_delete = Contact.objects.get(pk=contact_id)
+    try:
+        to_delete.delete()
+    except (KeyError, Contact.DoesNotExist):
+        # Redisplay the question voting form.
+        return render(request, 'address/detail.html', {
+            'old-contact': to_delete,
+            'error_message': "Field does not exist, report this bug to an admin.",
+        })
+    return HttpResponseRedirect(reverse('address:home'))
 
 
-def phone_add():
-    return None
+def phone_add(request):
+    return HttpResponseRedirect(reverse('address:home'))
 
 
-def phone_delete():
-    return None
+def phone_delete(request, contact_id, phonenumber_id):
+    return HttpResponseRedirect(reverse('address:home'))
 
 
-def sign_out():
-    return None
+def sign_out(request):
+    return HttpResponseRedirect(reverse('address:index'))
