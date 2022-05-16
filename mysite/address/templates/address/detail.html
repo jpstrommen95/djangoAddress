@@ -1,0 +1,8 @@
+<h1>{{contact.full_name}}</h1>
+<p>{{contact.email_address}}</p>
+<p>{{contact.street_address}}</p>
+<ul>
+    {% for phone_number in contact.phonenumber_set.all %}
+        <li>{{phone_number}}</li>
+    {% endfor %}
+</ul>

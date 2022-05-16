@@ -1,6 +1,4 @@
-import datetime
 from django.db import models
-from django.utils import timezone
 
 
 # 3 steps for making model changes
@@ -10,23 +8,44 @@ from django.utils import timezone
 # Run python manage.py migrate to apply those changes to the database.
 
 # Create your models here.
+class Contact(models.Model):
+    # todo connect to a user
+    first_name = models.CharField(max_length=200)
+    last_name = models.CharField(max_length=200)
+    email_address = models.CharField(max_length=200)
+    street_address = models.CharField(max_length=200)
 
-
-class Question(models.Model):
-    question_text = models.CharField(max_length=200)
-    pub_date = models.DateTimeField('date published')
-
-    def __str__(self):
-        return self.question_text
-
-    def was_published_recently(self):
-        return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
-
-
-class Choice(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    choice_text = models.CharField(max_length=200)
-    votes = models.IntegerField(default=0)
+    @property
+    def full_name(self):
+        full_name = ""
+        full_name += self.first_name
+        full_name += " "
+        full_name += self.last_name
+        return full_name
 
     def __str__(self):
-        return self.choice_text
+        ret_str = ""
+        ret_str += self.full_name
+        ret_str += " - "
+        ret_str += self.email_address
+        ret_str += " - "
+        ret_str += self.street_address
+        return ret_str
+
+
+class PhoneNumber(models.Model):
+    contact = models.ForeignKey(Contact, on_delete=models.CASCADE)
+    phone_number = models.CharField('Un-formatted Phone Number', max_length=11)
+    type = models.CharField(max_length=200)
+
+    # a simple phone formatter
+    @staticmethod
+    def phone_format(n):
+        return format(int(n[:-1]), ",").replace(",", "-") + n[-1]
+
+    def __str__(self):
+        ret_str = ""
+        ret_str += self.type
+        ret_str += ": "
+        ret_str += self.phone_number  # fixme format this
+        return ret_str
