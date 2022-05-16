@@ -1,10 +1,9 @@
-<!--todo pass in user-->
-<h1>Address Book</h1>
+<h1>Address Book for {{user_id}}</h1>
 {% if contact_list %}
 <ul>
     {% for contact in contact_list %}
     <li>
-        <a href="{% url 'address:detail' contact.id %}">
+        <a href="{% url 'address:detail' user_id contact.id %}">
             <p>{{ contact.full_name }}</p>
             <p>{{ contact.email_address }}</p>
             <p>{{ contact.street_address }}</p>

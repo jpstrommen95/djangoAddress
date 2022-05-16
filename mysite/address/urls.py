@@ -18,5 +18,6 @@ urlpatterns = [
     path('/<int:contact_id>/do_delete', views.do_delete, name='do_delete'),
     path('/<int:contact_id>/phone/do_add', views.phone_add, name='phone_add'),
     path('/<int:contact_id>/phone/<int:phonenumber_id>/do_delete', views.phone_delete, name='phone_delete'),
+    path('/sign_in', views.sign_in, name='sign_in'),
     path('/sign_out', views.sign_out, name='sign_out'),
 ]

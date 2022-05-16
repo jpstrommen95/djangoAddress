@@ -7,12 +7,12 @@
     {% endfor %}
 </ul>
 
-<form action="{% url 'address:do_delete' contact.id %}" method="delete">
+<form action="{% url 'address:do_delete' user_id contact.id %}" method="delete">
     {% csrf_token %}
     <button type="submit">Delete Full Contact</button>
 </form>
 
-<form id="infoForm" action="{% url 'address:do_edit' contact.id %}" method="post">
+<form id="infoForm" action="{% url 'address:do_edit' user_id contact.id %}" method="post">
     {% csrf_token %}
     <fieldset>
         <legend><h1>Edit Info</h1></legend>
@@ -34,14 +34,14 @@
 <ul>
     {% for phonenumber in contact.phonenumber_set.all %}
     <li>{{phonenumber}}</li>
-    <form action="{% url 'address:phone_delete' contact.id phonenumber.id %}" method="delete">
+    <form action="{% url 'address:phone_delete' user_id contact.id phonenumber.id %}" method="delete">
         {% csrf_token %}
         <button type="submit">Delete</button>
     </form>
     {% endfor %}
 </ul>
 
-<form id="phoneAddForm" action="{% url 'address:phone_add' contact.id %}" method="post">
+<form id="phoneAddForm" action="{% url 'address:phone_add' user_id contact.id %}" method="post">
     {% csrf_token %}
     <select name="phoneTypes">
         <option value="Home">Home</option>
@@ -52,4 +52,4 @@
     <button type="submit" form="phoneAddForm">Add Phone</button>
 </form>
 
-<h3><a href="{% url 'address:home' %}">Back to Address Book</a></h3>
+<h3><a href="{% url 'address:home' user_id %}">Back to Address Book</a></h3>

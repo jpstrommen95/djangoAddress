@@ -36,5 +36,11 @@ Adds a new phone number to a particular contact.
 /<contact_id>/phone/<phonenumber_id>/do_delete  
 Deletes the specified phone number from a particular contact.
 
+/sign_in
+Authenticates a user and on success redirects to home page.
+
+/sign_up
+Authenticates a new user and on success redirects to home page.
+
 /sign_out  
 Signs out the currently signed-in user. Returns them to sign-in/sign-up page.

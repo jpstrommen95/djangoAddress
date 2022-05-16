@@ -1,4 +1,4 @@
-<form action="{% url 'address:do_add' %}" method="post">
+<form action="{% url 'address:do_add' user_id %}" method="post">
     {% csrf_token %}
     <fieldset>
         <legend><h1>Add Contact</h1></legend>
@@ -17,4 +17,4 @@
     <input type="submit" value="Add Contact">
 </form>
 
-<h3><a href="{% url 'address:home' %}">Back to Address Book</a></h3>
+<h3><a href="{% url 'address:home' user_id %}">Back to Address Book</a></h3>
