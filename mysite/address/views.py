@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 
-from .models import Contact
+from .models import Contact, PhoneNumber
 
 
 # Create your views here.
@@ -28,14 +28,13 @@ def detail(request, contact_id):
 
 
 # *** actions ***
-def do_add(request):
+def do_add(request):  # fixme verify fields not empty
     try:
         Contact.objects.create(first_name=request.POST['fName'],
                                last_name=request.POST['lName'],
                                email_address=request.POST['email'],
                                street_address=request.POST['street'], )
     except (KeyError, Contact.DoesNotExist):
-        # Redisplay the question voting form.
         return render(request, 'address/add.html', {
             'error_message': "Field does not exist, report this bug to an admin.",
         })
@@ -54,7 +53,6 @@ def do_edit(request, contact_id):
         old_contact.street_address = request.POST['street']
         old_contact.save()
     except (KeyError, Contact.DoesNotExist):
-        # Redisplay the question voting form.
         return render(request, 'address/detail.html', {
             'contact': old_contact,
             'error_message': "Field does not exist, report this bug to an admin.",
@@ -68,7 +66,6 @@ def do_delete(request, contact_id):
     try:
         to_delete.delete()
     except (KeyError, Contact.DoesNotExist):
-        # Redisplay the question voting form.
         return render(request, 'address/detail.html', {
             'old-contact': to_delete,
             'error_message': "Field does not exist, report this bug to an admin.",
@@ -76,13 +73,29 @@ def do_delete(request, contact_id):
     return HttpResponseRedirect(reverse('address:home'))
 
 
-def phone_add(request):
-    return HttpResponseRedirect(reverse('address:home'))
+def phone_add(request, contact_id):
+    phone_type = request.POST['phoneTypes']
+    phone_number = request.POST['phoneNumber']
+    contact = Contact.objects.get(pk=contact_id)
+    try:
+        PhoneNumber.objects.create(contact_id=contact_id, type=phone_type, phone_number=phone_number)
+    except (KeyError, Contact.DoesNotExist):
+        return render(request, 'address/detail.html', {
+            'error_message': "error in phone add",
+        })
+    return render(request, 'address/detail.html', {'contact': contact})
 
 
 def phone_delete(request, contact_id, phonenumber_id):
-    # todo
-    return HttpResponseRedirect(reverse('address:home'))
+    to_delete = PhoneNumber.objects.get(pk=phonenumber_id)
+    contact = Contact.objects.get(pk=contact_id)
+    try:
+        to_delete.delete()
+    except (KeyError, Contact.DoesNotExist):
+        return render(request, 'address/detail.html', {
+            'error_message': "error in phone delete",
+        })
+    return render(request, 'address/detail.html', {'contact': contact})
 
 
 def sign_out(request):
