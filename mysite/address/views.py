@@ -81,6 +81,7 @@ def phone_add(request):
 
 
 def phone_delete(request, contact_id, phonenumber_id):
+    # todo
     return HttpResponseRedirect(reverse('address:home'))
 
 
