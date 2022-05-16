@@ -59,6 +59,21 @@ def do_edit(request, contact_id):
             'contact': old_contact,
             'error_message': "Field does not exist, report this bug to an admin.",
         })
-    # delete phone numbers todo
 
     return HttpResponseRedirect(reverse('address:home'))
+
+
+def do_delete():
+    return None
+
+
+def phone_add():
+    return None
+
+
+def phone_delete():
+    return None
+
+
+def sign_out():
+    return None
