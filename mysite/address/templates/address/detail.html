@@ -6,11 +6,13 @@
     <li>{{phone_number}}</li>
     {% endfor %}
 </ul>
-<h3><a href="{% url 'address:home' %}">Back to Address Book</a></h3>
 
-<br>
+<form action="{% url 'address:do_delete' contact.id %}" method="delete">
+    {% csrf_token %}
+    <button type="submit">Delete</button>
+</form>
 
-<form action="{% url 'address:edit' contact.id %}" method="post">
+<form action="{% url 'address:do_edit' contact.id %}" method="post">
     {% csrf_token %}
     <fieldset>
         <legend><h1>Edit Info</h1></legend>
@@ -32,8 +34,9 @@
             <label for="phonenumber{{ forloop.counter }}">{{phonenumber}}</label>
             <br>
             {% endfor %}
-            <p>Uncheck phone numbers to have them removed when saving contact.</p>
         </div>
     </fieldset>
     <input type="submit" value="Save Changes">
 </form>
+
+<h3><a href="{% url 'address:home' %}">Back to Address Book</a></h3>

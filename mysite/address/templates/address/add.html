@@ -1,0 +1,20 @@
+<form action="{% url 'address:do_add' %}" method="post">
+    {% csrf_token %}
+    <fieldset>
+        <legend><h1>Add Contact</h1></legend>
+        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+        <div>
+            <input type="text" placeholder="First Name" name="fName">
+            <input type="text" placeholder="Last Name" name="lName">
+        </div>
+        <div>
+            <input type="email" placeholder="Email Address" name="email">
+        </div>
+        <div>
+            <input type="text" placeholder="Street Address" name="street">
+        </div>
+    </fieldset>
+    <input type="submit" value="Add Contact">
+</form>
+
+<h3><a href="{% url 'address:home' %}">Back to Address Book</a></h3>
