@@ -7,5 +7,8 @@
     {% endfor %}
     </ul>
 {% else %}
-    <p>No polls are available.</p>
+    <p>No contacts are available.</p>
 {% endif %}
+
+<!--todo css this into a button-->
+<a href="{% url 'address:add' %}">Add New Contact</a>

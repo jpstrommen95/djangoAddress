@@ -8,6 +8,9 @@ app_name = 'address'  # give it a namespace here
 urlpatterns = [
     path('', views.index, name='login'),
     path('home/', views.home, name='home'),
+    path('add/', views.add, name='add'),
     path('<int:contact_id>/', views.detail, name='detail'),
-    path('<int:contact_id>/edit/', views.edit, name='edit'),
+
+    path('<int:contact_id>/edit/', views.do_edit, name='do_edit'),
+    path('do_add/', views.do_add, name='do_add'),
 ]

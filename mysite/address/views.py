@@ -18,12 +18,32 @@ def home(request):
     return render(request, 'address/home.html', context)
 
 
+def add(request):
+    return render(request, 'address/add.html')
+
+
 def detail(request, contact_id):
     contact = get_object_or_404(Contact, pk=contact_id)
     return render(request, 'address/detail.html', {'contact': contact})
 
 
-def edit(request, contact_id):
+# *** actions ***
+def do_add(request):
+    try:
+        Contact.objects.create(first_name=request.POST['fName'],
+                               last_name=request.POST['lName'],
+                               email_address=request.POST['email'],
+                               street_address=request.POST['street'], )
+    except (KeyError, Contact.DoesNotExist):
+        # Redisplay the question voting form.
+        return render(request, 'address/add.html', {
+            'error_message': "Field does not exist, report this bug to an admin.",
+        })
+
+    return HttpResponseRedirect(reverse('address:home'))
+
+
+def do_edit(request, contact_id):
     # get contact
     old_contact = get_object_or_404(Contact, pk=contact_id)
     # edit contact
@@ -42,4 +62,3 @@ def edit(request, contact_id):
     # delete phone numbers todo
 
     return HttpResponseRedirect(reverse('address:home'))
-
