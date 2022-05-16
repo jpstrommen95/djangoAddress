@@ -1,0 +1,5 @@
+Search through address book
+Format phone numbers nicely
+Add contact from modal instead of new page
+Apply CSS
+Create/Edit/Delete User w/out commandline/admin stuff
