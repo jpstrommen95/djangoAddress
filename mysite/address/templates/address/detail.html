@@ -3,6 +3,37 @@
 <p>{{contact.street_address}}</p>
 <ul>
     {% for phone_number in contact.phonenumber_set.all %}
-        <li>{{phone_number}}</li>
+    <li>{{phone_number}}</li>
     {% endfor %}
 </ul>
+<h3><a href="{% url 'address:home' %}">Back to Address Book</a></h3>
+
+<br>
+
+<form action="{% url 'address:edit' contact.id %}" method="post">
+    {% csrf_token %}
+    <fieldset>
+        <legend><h1>Edit Info</h1></legend>
+        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+        <div>
+            <input type="text" placeholder="First Name" value="{{contact.first_name}}" name="fName">
+            <input type="text" placeholder="Last Name" value="{{contact.last_name}}" name="lName">
+        </div>
+        <div>
+            <input type="email" placeholder="Email Address" value="{{contact.email_address}}" name="email">
+        </div>
+        <div>
+            <input type="text" placeholder="Street Address" value="{{contact.street_address}}" name="street">
+        </div>
+        <div>
+            {% for phonenumber in contact.phonenumber_set.all %}
+            <input type="checkbox" name="numberKey" id="phonenumber{{ forloop.counter }}" value="{{ phonenumber.id }}"
+                   checked>
+            <label for="phonenumber{{ forloop.counter }}">{{phonenumber}}</label>
+            <br>
+            {% endfor %}
+            <p>Uncheck phone numbers to have them removed when saving contact.</p>
+        </div>
+    </fieldset>
+    <input type="submit" value="Save Changes">
+</form>
