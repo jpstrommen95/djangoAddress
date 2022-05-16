@@ -1,0 +1,11 @@
+<!--todo pass in user-->
+<h1>Address Book</h1>
+{% if contact_list %}
+    <ul>
+    {% for contact in contact_list %}
+        <li><a href="{% url 'address:detail' contact.id %}">{{ contact.full_name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No polls are available.</p>
+{% endif %}
