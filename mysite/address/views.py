@@ -1,36 +1,41 @@
+from django.contrib.auth import authenticate, logout
+from django.contrib.auth.models import User
+from django.db import IntegrityError
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 
 from .models import Contact, PhoneNumber
 
 
 # Create your views here.
-# todo make an index page for login
 def index(request):
-    context = {}
-    return render(request, 'address/index.html', context)
+    return render(request, 'address/index.html')
 
 
-def home(request):
-    contact_list = Contact.objects.order_by('last_name')  # todo insert filter on owner_id
-    context = {'contact_list': contact_list}
+def home(request, user_id):
+    contact_list = Contact.objects.filter(owner_id=user_id).order_by('last_name')
+    context = {'contact_list': contact_list,
+               'user_id': user_id,
+               'user': User.objects.get(pk=user_id), }
     return render(request, 'address/home.html', context)
 
 
-def add(request):
-    return render(request, 'address/add.html')
+def add(request, user_id):
+    context = {'user_id': user_id}
+    return render(request, 'address/add.html', context)
 
 
-def detail(request, contact_id):
+def detail(request, user_id, contact_id):
     contact = get_object_or_404(Contact, pk=contact_id)
-    return render(request, 'address/detail.html', {'contact': contact})
+    return render(request, 'address/detail.html', {'contact': contact, 'user_id': user_id})
 
 
 # *** actions ***
-def do_add(request):  # fixme verify fields not empty
+def do_add(request, user_id):  # fixme verify fields not empty
     try:
-        Contact.objects.create(first_name=request.POST['fName'],
+        Contact.objects.create(owner_id=user_id,
+                               first_name=request.POST['fName'],
                                last_name=request.POST['lName'],
                                email_address=request.POST['email'],
                                street_address=request.POST['street'], )
@@ -39,10 +44,10 @@ def do_add(request):  # fixme verify fields not empty
             'error_message': "Field does not exist, report this bug to an admin.",
         })
 
-    return HttpResponseRedirect(reverse('address:home'))
+    return HttpResponseRedirect(reverse('address:home', args=(user_id,)))
 
 
-def do_edit(request, contact_id):
+def do_edit(request, user_id, contact_id):
     # get contact
     old_contact = get_object_or_404(Contact, pk=contact_id)
     # edit contact
@@ -58,10 +63,10 @@ def do_edit(request, contact_id):
             'error_message': "Field does not exist, report this bug to an admin.",
         })
 
-    return HttpResponseRedirect(reverse('address:home'))
+    return HttpResponseRedirect(reverse('address:home', args=(user_id,)))
 
 
-def do_delete(request, contact_id):
+def do_delete(request, user_id, contact_id):
     to_delete = Contact.objects.get(pk=contact_id)
     try:
         to_delete.delete()
@@ -70,10 +75,10 @@ def do_delete(request, contact_id):
             'old-contact': to_delete,
             'error_message': "Field does not exist, report this bug to an admin.",
         })
-    return HttpResponseRedirect(reverse('address:home'))
+    return HttpResponseRedirect(reverse('address:home', args=(user_id,)))
 
 
-def phone_add(request, contact_id):
+def phone_add(request, user_id, contact_id):
     phone_type = request.POST['phoneTypes']
     phone_number = request.POST['phoneNumber']
     contact = Contact.objects.get(pk=contact_id)
@@ -83,10 +88,10 @@ def phone_add(request, contact_id):
         return render(request, 'address/detail.html', {
             'error_message': "error in phone add",
         })
-    return render(request, 'address/detail.html', {'contact': contact})
+    return render(request, 'address/detail.html', {'contact': contact, 'user_id': user_id})
 
 
-def phone_delete(request, contact_id, phonenumber_id):
+def phone_delete(request, user_id, contact_id, phonenumber_id):
     to_delete = PhoneNumber.objects.get(pk=phonenumber_id)
     contact = Contact.objects.get(pk=contact_id)
     try:
@@ -95,8 +100,25 @@ def phone_delete(request, contact_id, phonenumber_id):
         return render(request, 'address/detail.html', {
             'error_message': "error in phone delete",
         })
-    return render(request, 'address/detail.html', {'contact': contact})
+    return render(request, 'address/detail.html', {'contact': contact, 'user_id': user_id})
+
+
+def sign_in(request):
+    try:
+        user = authenticate(request, username=request.POST['username'], password=request.POST['passKey'])
+        if user is not None:
+            # A backend authenticated the credentials
+            pass
+        else:
+            user = User.objects.create_user(username=request.POST['username'],
+                                            password=request.POST['passKey'], )
+    except IntegrityError:
+        return render(request, 'address/index.html', {
+            'error_message': "Could not log in, please check your credentials.",
+        })
+    return HttpResponseRedirect(reverse('address:home', args=(user.id,)))
 
 
 def sign_out(request):
-    return HttpResponseRedirect(reverse('address:index'))
+    logout(request)
+    return HttpResponseRedirect(reverse('address:login'))

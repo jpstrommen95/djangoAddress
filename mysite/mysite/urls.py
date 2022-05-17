@@ -18,6 +18,6 @@ from django.urls import include, path
 
 # point the urls of our app to the module
 urlpatterns = [
-    path('address', include('address.urls')),
+    path('address/', include('address.urls')),
     path('admin/', admin.site.urls),  # this is the exception to using include
 ]

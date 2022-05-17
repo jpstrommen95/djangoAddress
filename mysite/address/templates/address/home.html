@@ -1,10 +1,12 @@
-<!--todo pass in user-->
-<h1>Address Book</h1>
+<h1>Address Book for {{user.username}}</h1>
+
+<a href="{% url 'address:sign_out' %}">Sign Out</a>
+
 {% if contact_list %}
 <ul>
     {% for contact in contact_list %}
     <li>
-        <a href="{% url 'address:detail' contact.id %}">
+        <a href="{% url 'address:detail' user_id contact.id %}">
             <p>{{ contact.full_name }}</p>
             <p>{{ contact.email_address }}</p>
             <p>{{ contact.street_address }}</p>
@@ -17,4 +19,4 @@
 {% endif %}
 
 <!--todo css this into a button-->
-<a href="{% url 'address:add' %}">Add New Contact</a>
+<a href="{% url 'address:add' user_id %}">Add New Contact</a>
