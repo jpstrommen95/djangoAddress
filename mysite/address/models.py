@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 # 3 steps for making model changes
@@ -9,7 +10,7 @@ from django.db import models
 
 # Create your models here.
 class Contact(models.Model):
-    # todo connect to a user
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
     email_address = models.CharField(max_length=200)

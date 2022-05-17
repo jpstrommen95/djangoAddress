@@ -8,16 +8,15 @@ from .models import Contact, PhoneNumber
 
 
 # Create your views here.
-# todo make an index page for login
 def index(request):
-    context = {'isSignUp': False}
-    return render(request, 'address/index.html', context)
+    return render(request, 'address/index.html')
 
 
 def home(request, user_id):
     contact_list = Contact.objects.order_by('last_name')  # todo insert filter on owner_id
     context = {'contact_list': contact_list,
-               'user_id': user_id}
+               'user_id': user_id,
+               'user': User.objects.get(pk=user_id), }
     return render(request, 'address/home.html', context)
 
 
@@ -28,7 +27,7 @@ def add(request, user_id):
 
 def detail(request, user_id, contact_id):
     contact = get_object_or_404(Contact, pk=contact_id)
-    return render(request, 'address/detail.html', {'contact': contact})
+    return render(request, 'address/detail.html', {'contact': contact, 'user_id': user_id})
 
 
 # *** actions ***
@@ -43,7 +42,7 @@ def do_add(request, user_id):  # fixme verify fields not empty
             'error_message': "Field does not exist, report this bug to an admin.",
         })
 
-    return HttpResponseRedirect(reverse('address:home'))
+    return HttpResponseRedirect(reverse('address:home', args=(user_id,)))
 
 
 def do_edit(request, user_id, contact_id):
@@ -62,7 +61,7 @@ def do_edit(request, user_id, contact_id):
             'error_message': "Field does not exist, report this bug to an admin.",
         })
 
-    return HttpResponseRedirect(reverse('address:home'))
+    return HttpResponseRedirect(reverse('address:home', args=(user_id,)))
 
 
 def do_delete(request, user_id, contact_id):
@@ -74,7 +73,7 @@ def do_delete(request, user_id, contact_id):
             'old-contact': to_delete,
             'error_message': "Field does not exist, report this bug to an admin.",
         })
-    return HttpResponseRedirect(reverse('address:home'))
+    return HttpResponseRedirect(reverse('address:home', args=(user_id,)))
 
 
 def phone_add(request, user_id, contact_id):
@@ -87,7 +86,7 @@ def phone_add(request, user_id, contact_id):
         return render(request, 'address/detail.html', {
             'error_message': "error in phone add",
         })
-    return render(request, 'address/detail.html', {'contact': contact})
+    return render(request, 'address/detail.html', {'contact': contact, 'user_id': user_id})
 
 
 def phone_delete(request, user_id, contact_id, phonenumber_id):
@@ -99,11 +98,10 @@ def phone_delete(request, user_id, contact_id, phonenumber_id):
         return render(request, 'address/detail.html', {
             'error_message': "error in phone delete",
         })
-    return render(request, 'address/detail.html', {'contact': contact})
+    return render(request, 'address/detail.html', {'contact': contact, 'user_id': user_id})
 
 
 def sign_in(request):
-    print()
     user = authenticate(request, username=request.POST['username'], password=request.POST['passKey'])
     if user is not None:
         # A backend authenticated the credentials
@@ -111,7 +109,7 @@ def sign_in(request):
     else:
         user = User.objects.create_user(username=request.POST['username'],
                                         password=request.POST['passKey'], )
-    return HttpResponseRedirect(reverse('address:home'))
+    return HttpResponseRedirect(reverse('address:home', args=(user.id,)))
 
 
 def sign_out(request, user_id):

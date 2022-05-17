@@ -3,4 +3,4 @@ Format phone numbers nicely
 Add contact from modal instead of new page
 Apply CSS
 Edge case protects - verify inputs not empty, valid formats, etc.
-Create/Edit/Delete User w/out commandline/admin stuff
+Edit/Delete User w/out commandline/admin page commands
