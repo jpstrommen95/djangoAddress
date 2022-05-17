@@ -1,4 +1,7 @@
 <h1>Address Book for {{user.username}}</h1>
+
+<a href="{% url 'address:sign_out' %}">Sign Out</a>
+
 {% if contact_list %}
 <ul>
     {% for contact in contact_list %}

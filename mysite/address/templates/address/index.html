@@ -1,5 +1,6 @@
 <h1>Log in to access Address Book</h1>
 <p>Log in with your account credentials, don't have one? Welcome, a new one will be created for you.</p>
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 <form action="{% url 'address:sign_in' %}" method='post'>
     {% csrf_token %}
     <div>

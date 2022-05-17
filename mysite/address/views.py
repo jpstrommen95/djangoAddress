@@ -1,5 +1,6 @@
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, logout
 from django.contrib.auth.models import User
+from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
@@ -13,7 +14,7 @@ def index(request):
 
 
 def home(request, user_id):
-    contact_list = Contact.objects.order_by('last_name')  # todo insert filter on owner_id
+    contact_list = Contact.objects.filter(owner_id=user_id).order_by('last_name')
     context = {'contact_list': contact_list,
                'user_id': user_id,
                'user': User.objects.get(pk=user_id), }
@@ -33,7 +34,8 @@ def detail(request, user_id, contact_id):
 # *** actions ***
 def do_add(request, user_id):  # fixme verify fields not empty
     try:
-        Contact.objects.create(first_name=request.POST['fName'],
+        Contact.objects.create(owner_id=user_id,
+                               first_name=request.POST['fName'],
                                last_name=request.POST['lName'],
                                email_address=request.POST['email'],
                                street_address=request.POST['street'], )
@@ -102,15 +104,21 @@ def phone_delete(request, user_id, contact_id, phonenumber_id):
 
 
 def sign_in(request):
-    user = authenticate(request, username=request.POST['username'], password=request.POST['passKey'])
-    if user is not None:
-        # A backend authenticated the credentials
-        pass
-    else:
-        user = User.objects.create_user(username=request.POST['username'],
-                                        password=request.POST['passKey'], )
+    try:
+        user = authenticate(request, username=request.POST['username'], password=request.POST['passKey'])
+        if user is not None:
+            # A backend authenticated the credentials
+            pass
+        else:
+            user = User.objects.create_user(username=request.POST['username'],
+                                            password=request.POST['passKey'], )
+    except IntegrityError:
+        return render(request, 'address/index.html', {
+            'error_message': "Could not log in, please check your credentials.",
+        })
     return HttpResponseRedirect(reverse('address:home', args=(user.id,)))
 
 
-def sign_out(request, user_id):
-    return HttpResponseRedirect(reverse('address:index'))
+def sign_out(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('address:login'))
