@@ -14,6 +14,7 @@ See api.md for a summary of the api defined in address/urls.py
 Assumptions:
 I assumed that django projects always trigger html requests through html forms,
 because that's how the official tutorial did it.
+I also assumed that user stories and features of convenience were more valuable than visual styling.
 
 Next steps:
 See stretchGoals.txt for a list of things I would do if I continued investing in this project
